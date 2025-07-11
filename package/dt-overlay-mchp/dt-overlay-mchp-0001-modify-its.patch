@@ -1,0 +1,36 @@
+--- a/sama5d29_curiosity.its
++++ b/sama5d29_curiosity.its
+@@ -149,6 +149,25 @@
+ 				algo = "sha1";
+ 			};
+ 		};
++		/*
++		 * Add section for ramdisk.
++                 */
++		ramdisk {
++                       description = "Initramfs";
++                       data = /incbin/("/home/hiro/Linux/buildroot-external-microchip/images/my_rootfs.cpio.gz"); 
++                       type = "ramdisk";
++                       arch = "arm";
++                       os = "linux";
++                       compression = "gzip";
++                       load = <0x30000000>;
++                       hash-1 {
++                               algo = "crc32";
++                       };
++                       hash-2 {
++                               algo = "sha1";
++                       };
++               };
++		
+ 	};
+ 
+ 	configurations {
+@@ -158,6 +177,7 @@
+ 			description = "Linux kernel and base FDT blob for SAMA5D29-Curiosity board";
+ 			kernel = "kernel";
+ 			fdt = "base_fdt";
++			ramdisk = "ramdisk";
+ 		};
+ 
+ 		base_dtb {
