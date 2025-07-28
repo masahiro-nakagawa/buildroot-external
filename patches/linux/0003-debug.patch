@@ -1,0 +1,72 @@
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1106,7 +1106,7 @@
+ 	u8 rid;
+ 	int rc, probe;
+ 	struct tpm_chip *chip;
+-
++	printk(KERN_INFO "Entered tpm_tis_core_init\n");
+ 	chip = tpmm_chip_alloc(dev, &tpm_tis);
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+@@ -1131,11 +1131,14 @@
+ 	INIT_WORK(&priv->free_irq_work, tpm_tis_free_irq_func);
+ 
+ 	dev_set_drvdata(&chip->dev, priv);
+-
++	printk(KERN_INFO "About to call tpm_tis_read32\n");
+ 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
++	printk(KERN_INFO "tpm_tis_reade32 returned %d\n",rc);
+ 	if (rc < 0)
+ 		return rc;
+ 
++	printk(KERN_INFO "Did not return. continue.,,,, \n");
++
+ 	priv->manufacturer_id = vendor;
+ 
+ 	if (priv->manufacturer_id == TPM_VID_ATML &&
+@@ -1143,12 +1146,14 @@
+ 		priv->timeout_min = TIS_TIMEOUT_MIN_ATML;
+ 		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+ 	}
+-
++	printk(KERN_INFO "About to call is_bsw()\n");
+ 	if (is_bsw()) {
+ 		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+ 					ILB_REMAP_SIZE);
+-		if (!priv->ilb_base_addr)
++		if (!priv->ilb_base_addr){
++			printk(KERN_INFO "Return %d\n",ENOMEM);
+ 			return -ENOMEM;
++		}
+ 
+ 		clkrun_val = ioread32(priv->ilb_base_addr + LPC_CNTRL_OFFSET);
+ 		/* Check if CLKRUN# is already not enabled in the LPC bus */
+@@ -1157,15 +1162,15 @@
+ 			priv->ilb_base_addr = NULL;
+ 		}
+ 	}
+-
++	printk(KERN_INFO "Checkpoint Checkpoint 111\n");
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+-
++	printk(KERN_INFO "Wait start up\n");
+ 	if (wait_startup(chip, 0) != 0) {
+ 		rc = -ENODEV;
+ 		goto out_err;
+ 	}
+-
++	printk(KERN_INFO "Did not return ENODEV\n");
+ 	/* Take control of the TPM's interrupt hardware and shut it off */
+ 	rc = tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
+ 	if (rc < 0)
+@@ -1300,7 +1305,7 @@
+ 		chip->ops->clk_enable(chip, false);
+ 
+ 	tpm_tis_remove(chip);
+-
++	printk(KERN_INFO "retruning from out_err\n");
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(tpm_tis_core_init);

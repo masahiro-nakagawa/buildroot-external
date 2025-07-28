@@ -1,0 +1,28 @@
+--- a/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
++++ b/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
+@@ -130,13 +130,19 @@
+ &flx4 {
+ 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_SPI>;
+ 	status = "okay";
++};
++
++&spi6 {
++        status = "okay";
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_rpi_spi>;
+ 
+-	spi6: spi@400 {
+-		dmas = <0>, <0>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_rpi_spi>;
+-		status = "okay";
+-	};
++        tpm@0 {
++                compatible = "tcg,tpm_tis-spi";
++                reg = <0>;
++                spi-max-frequency = <10000000>;
++                status = "okay";
++        };
+ };
+ 
+ &i2c0 {
